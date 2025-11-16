@@ -2,6 +2,7 @@ package Pages;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import io.qameta.allure.Step;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,6 +11,7 @@ import java.util.List;
 
 public class ExcelUtils {
 
+    @Step("قراءة بيانات الإكسل من الملف: {filePath} والشيت: {sheetName}")
     public static List<String[]> readExcel(String filePath, String sheetName) {
         List<String[]> data = new ArrayList<>();
 
@@ -43,7 +45,6 @@ public class ExcelUtils {
         return data;
     }
 
-    // دالة مساعدة لقراءة قيمة الخلية بأمان كـ String
     private static String getCellStringValue(Cell cell) {
         if (cell == null) return "";
 
@@ -51,11 +52,9 @@ public class ExcelUtils {
             case STRING:
                 return cell.getStringCellValue();
             case NUMERIC:
-                // تحقق مما إذا كان رقمًا عاديًا (ليس تاريخًا)
                 if (DateUtil.isCellDateFormatted(cell)) {
                     return cell.getDateCellValue().toString();
                 } else {
-                    // تحويل الرقم إلى String بدون .0 إذا كان عددًا صحيحًا
                     double value = cell.getNumericCellValue();
                     if (value == (long) value) {
                         return String.valueOf((long) value);
