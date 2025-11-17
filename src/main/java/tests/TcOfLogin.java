@@ -33,14 +33,12 @@ public class TcOfLogin {
         driver.manage().window().maximize();
         driver.get("https://eshop.vodafone.com.eg/shop/home");
 
-        // If homepage not found → navigate manually
         if (driver.getTitle().contains("Page Not Found") || driver.getCurrentUrl().contains("notfound")) {
             navigateFromNotFound();
         }
 
         HomePage homePage = new HomePage(driver);
 
-        // ✔ Popup removed from Vodafone website — only cookies banner is handled
         homePage.closePopupAndCookies();
     }
 
@@ -88,7 +86,6 @@ public class TcOfLogin {
     public void verifyHomePage(HomePage homePage) {
         Allure.step("Verify homepage is displayed via logo");
 
-        // ✔ Now this checks only cookies + logo visibility
         Assert.assertTrue(homePage.isHomePageDisplayed(), "Home page was not displayed after login!");
     }
 

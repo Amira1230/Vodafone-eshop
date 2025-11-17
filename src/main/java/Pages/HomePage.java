@@ -36,12 +36,10 @@ public class HomePage {
     @Step("Close cookies banner only (popup removed from site)")
     public void closePopupAndCookies() {
 
-        // NOTE:
-        // Popup removed from Vodafone website — popup handling disabled.
+.
 
         WebDriverWait shortWait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
-        // Previously existed popup — REMOVED
         /*
         try {
             shortWait.until(ExpectedConditions.elementToBeClickable(popupCloseButton)).click();
@@ -51,7 +49,6 @@ public class HomePage {
         }
         */
 
-        // Close cookies only
         try {
             shortWait.until(ExpectedConditions.elementToBeClickable(cookiesCloseButton)).click();
             System.out.println(" Cookies banner accepted");

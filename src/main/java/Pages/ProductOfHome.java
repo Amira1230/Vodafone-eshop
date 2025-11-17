@@ -17,10 +17,10 @@ public class ProductOfHome {
     public ProductOfHome(WebDriver driver) {
         this.driver = driver;
         PageFactory.initElements(driver, this);
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(15)); // وقت عام أقل
     }
 
-    // ---------------------- Locators ----------------------
+    // Locators
 
     @FindBy(xpath = "//span[contains(text(),'Laptops')]")
     private WebElement laptopsCategory;
@@ -37,8 +37,8 @@ public class ProductOfHome {
     @FindBy(id = "searchInput")
     private WebElement searchInput;
 
-    // أفضل locator لنتيجة iPhone
-    @FindBy(xpath = "//img[contains(@alt,'iPhone')]/ancestor::div[@class='card-header']//button[contains(@class,'cart')]")
+
+    @FindBy(xpath = "//button[@aria-label='Add iPhone Air to cart']")
     private WebElement iphoneProductCartIcon;
 
     @FindBy(xpath = "//button[contains(@class,'add-to-cart') and not(@disabled)]")
@@ -50,7 +50,7 @@ public class ProductOfHome {
     @FindBy(css = "a[href*='cart']")
     private WebElement cartIcon;
 
-    // ---------------------- Actions ----------------------
+    // Actions
 
     @Step("Open Laptops category")
     public void openLaptopsPage() {
@@ -63,40 +63,34 @@ public class ProductOfHome {
         handleAddToCartPopup();
     }
 
-    @Step("Add product2 TV to cart")
+    @Step("Add product2 TV to cart (wait time reduced)")
     public void addFirstTV() {
-        wait.until(ExpectedConditions.elementToBeClickable(tvsCategory)).click();
-        wait.until(ExpectedConditions.elementToBeClickable(firstTVAddToCart)).click();
+        WebDriverWait shortWait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        shortWait.until(ExpectedConditions.elementToBeClickable(tvsCategory)).click();
+        shortWait.until(ExpectedConditions.elementToBeClickable(firstTVAddToCart)).click();
         handleAddToCartPopup();
     }
 
-    // ---------------------- NEW: Improved Search ----------------------
-
+// search & add iphone
     @Step("Search for 'iphone' and add first result to cart")
     public void searchAndAddIphone() {
 
-        // 1️⃣ Wait & clear search field
         wait.until(ExpectedConditions.visibilityOf(searchInput));
         searchInput.click();
         searchInput.clear();
 
-        // 2️⃣ Type 'iphone' letter-by-letter (to simulate real user typing)
         String keyword = "iphone";
         for (char ch : keyword.toCharArray()) {
             searchInput.sendKeys(String.valueOf(ch));
-            sleep(150);  // small delay between characters
+            sleep(150); // صغير delay
         }
 
-        // 3️⃣ Press ENTER to search
         searchInput.sendKeys(Keys.ENTER);
 
-        // 4️⃣ Wait for the iPhone product to appear
         wait.until(ExpectedConditions.elementToBeClickable(iphoneProductCartIcon));
 
-        // 5️⃣ Click Add to Cart (JS click for stability)
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", iphoneProductCartIcon);
 
-        // 6️⃣ Handle popup
         handleAddToCartPopup();
     }
 
@@ -115,7 +109,6 @@ public class ProductOfHome {
         }
     }
 
-    // small sleep method
     private void sleep(long ms) {
         try { Thread.sleep(ms); }
         catch (InterruptedException ignored) {}
