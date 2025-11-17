@@ -20,7 +20,8 @@ public class ProductOfHome {
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(20));
     }
 
-    //  Locators
+    // ---------------------- Locators ----------------------
+
     @FindBy(xpath = "//span[contains(text(),'Laptops')]")
     private WebElement laptopsCategory;
 
@@ -36,7 +37,8 @@ public class ProductOfHome {
     @FindBy(id = "searchInput")
     private WebElement searchInput;
 
-    @FindBy(xpath = "//img[contains(@alt,'iPhone 17 Pro Max')]/ancestor::div[@class='card-header']//button[contains(@class,'cart')]")
+    // أفضل locator لنتيجة iPhone
+    @FindBy(xpath = "//img[contains(@alt,'iPhone')]/ancestor::div[@class='card-header']//button[contains(@class,'cart')]")
     private WebElement iphoneProductCartIcon;
 
     @FindBy(xpath = "//button[contains(@class,'add-to-cart') and not(@disabled)]")
@@ -47,6 +49,8 @@ public class ProductOfHome {
 
     @FindBy(css = "a[href*='cart']")
     private WebElement cartIcon;
+
+    // ---------------------- Actions ----------------------
 
     @Step("Open Laptops category")
     public void openLaptopsPage() {
@@ -59,7 +63,6 @@ public class ProductOfHome {
         handleAddToCartPopup();
     }
 
-
     @Step("Add product2 TV to cart")
     public void addFirstTV() {
         wait.until(ExpectedConditions.elementToBeClickable(tvsCategory)).click();
@@ -67,15 +70,33 @@ public class ProductOfHome {
         handleAddToCartPopup();
     }
 
-    @Step("Search for 'iphone' and add result that you choose it to cart")
-    public void searchAndAddIphone() {
-        wait.until(ExpectedConditions.visibilityOf(searchInput));
-        searchInput.clear();
-        searchInput.sendKeys("iphone", Keys.ENTER);
+    // ---------------------- NEW: Improved Search ----------------------
 
+    @Step("Search for 'iphone' and add first result to cart")
+    public void searchAndAddIphone() {
+
+        // 1️⃣ Wait & clear search field
+        wait.until(ExpectedConditions.visibilityOf(searchInput));
+        searchInput.click();
+        searchInput.clear();
+
+        // 2️⃣ Type 'iphone' letter-by-letter (to simulate real user typing)
+        String keyword = "iphone";
+        for (char ch : keyword.toCharArray()) {
+            searchInput.sendKeys(String.valueOf(ch));
+            sleep(150);  // small delay between characters
+        }
+
+        // 3️⃣ Press ENTER to search
+        searchInput.sendKeys(Keys.ENTER);
+
+        // 4️⃣ Wait for the iPhone product to appear
         wait.until(ExpectedConditions.elementToBeClickable(iphoneProductCartIcon));
+
+        // 5️⃣ Click Add to Cart (JS click for stability)
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", iphoneProductCartIcon);
 
+        // 6️⃣ Handle popup
         handleAddToCartPopup();
     }
 
@@ -92,5 +113,11 @@ public class ProductOfHome {
         } catch (TimeoutException | NoSuchElementException e) {
             System.out.println(" No Add to Cart popup detected – proceeding");
         }
+    }
+
+    // small sleep method
+    private void sleep(long ms) {
+        try { Thread.sleep(ms); }
+        catch (InterruptedException ignored) {}
     }
 }

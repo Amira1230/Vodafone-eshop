@@ -19,7 +19,12 @@ public class HomePage {
     @FindBy(css = "p.logo-text")
     private WebElement vodafoneEshopLogo;
 
-    private final By popupCloseButton = By.xpath("//img[contains(@src, 'blackfriday-close.svg')]/..");
+    //  NOTE  ya eng/ahmed !!!!!!!!!!!!!
+    // Vodafone removed the  popup from the homepage.
+    // So, this locator is NOT used anymore and kept only for reference.
+    //
+    // private final By popupCloseButton = By.xpath("//img[contains(@src, 'blackfriday-close.svg')]/..");
+
     private final By cookiesCloseButton = By.id("onetrust-accept-btn-handler");
 
     public HomePage(WebDriver driver) {
@@ -28,17 +33,25 @@ public class HomePage {
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(20));
     }
 
-    @Step("Close advertisement popup and cookies banner if present")
+    @Step("Close cookies banner only (popup removed from site)")
     public void closePopupAndCookies() {
+
+        // NOTE:
+        // Popup removed from Vodafone website — popup handling disabled.
+
         WebDriverWait shortWait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
+        // Previously existed popup — REMOVED
+        /*
         try {
             shortWait.until(ExpectedConditions.elementToBeClickable(popupCloseButton)).click();
             System.out.println(" Advertisement popup closed");
         } catch (Exception e) {
             System.out.println(" Advertisement popup not found");
         }
+        */
 
+        // Close cookies only
         try {
             shortWait.until(ExpectedConditions.elementToBeClickable(cookiesCloseButton)).click();
             System.out.println(" Cookies banner accepted");
